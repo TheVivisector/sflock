@@ -66,7 +66,33 @@ class Unpacker(object):
             return False
 
         return not return_code
+    
+    def zipjail_clone_one(self, filepath, dirpath, *args):
+        zipjail = data_file(b"zipjail.elf")
 
+        p = subprocess.Popen(
+            (zipjail, filepath, dirpath, "--clone=1", "--", self.exe) + args,
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+
+        return_code = p.wait()
+        out, err = p.communicate()
+
+        if b"Excessive writing caused incomplete unpacking!" in err:
+            self.f.error = "files_too_large"
+            return False
+
+        if b"Detected potential out-of-path arbitrary overwrite!" in err:
+            self.f.error = "directory_traversal"
+            return False
+
+        if b"Blocked system call" in err and b"syscall=symlink" in err:
+            self.f.error = "malicious_symlink"
+            return False
+
+        return not return_code
+    
     def handles(self):
         if self.f.filename and self.f.filename.lower().endswith(self.exts):
             return True
