@@ -35,7 +35,7 @@ class Zip7File(Unpacker):
             temporary = True
 
         ret = self.zipjail(
-            filepath, dirpath, "x", "-mmt=off", "-o%s" % dirpath, filepath
+            filepath, dirpath, "x", "-o%s" % dirpath, filepath
         )
         if not ret:
             return []
