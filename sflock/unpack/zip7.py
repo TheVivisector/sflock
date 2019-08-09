@@ -34,8 +34,8 @@ class Zip7File(Unpacker):
             filepath = self.f.temp_path(b".7z")
             temporary = True
 
-        ret = self.zipjail(
-            filepath, dirpath, "x", "-o%s" % dirpath, filepath
+        ret = self.zipjail_clone_one(
+            filepath, dirpath, "x", "-mmt1","-o%s" % dirpath, filepath
         )
         if not ret:
             return []
@@ -61,8 +61,8 @@ class GzipFile(Unpacker):
             filepath = self.f.temp_path(".7z")
             temporary = True
 
-        ret = self.zipjail(
-            filepath, dirpath, "x", "-o%s" % dirpath, filepath
+        ret = self.zipjail_clone_one(
+            filepath, dirpath, "x", "-mmt1","-o%s" % dirpath, filepath
         )
         if not ret:
             return []
