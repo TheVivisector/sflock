@@ -13,9 +13,9 @@ from sflock.exception import UnpackException
 class Zip7File(Unpacker):
     name = "7zfile"
     exe = "/usr/bin/7z"
-    exts = b".7z", b".iso", b".img"
+    exts = b".7z", b".iso", b".img" 
     # TODO Should we use "isoparser" (check PyPI) instead of 7z?
-    magic = "7-zip archive", "ISO 9660", "UDF filesystem data"
+    magic = "7-zip archive", "ISO 9660", "UDF filesystem data" 
 
     def unpack(self, password=None, duplicates=None):
         dirpath = tempfile.mkdtemp()
@@ -98,3 +98,31 @@ class LzhFile(Unpacker):
             os.unlink(filepath)
 
         return self.process_directory(dirpath, duplicates)
+
+class VHDFile(Unpacker):
+    name = "vhdfile"
+    exe = "/usr/bin/7z"
+    exts = b".vhd"
+    magic = "Microsoft Disk Image, Virtual Server or Virtual PC"
+
+    def unpack(self, password=None, duplicates=None):
+        dirpath = tempfile.mkdtemp()
+
+        if self.f.filepath:
+            filepath = self.f.filepath
+            temporary = False
+        else:
+            filepath = self.f.temp_path(".vhd")
+            temporary = True
+
+        ret = self.zipjail_clone_one(
+            filepath, dirpath, "x","-o%s" % dirpath, filepath
+        )
+        if not ret:
+            return []
+
+        if temporary:
+            os.unlink(filepath)
+
+        return self.process_directory(dirpath, duplicates)
+
