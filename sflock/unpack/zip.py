@@ -96,4 +96,4 @@ class ZipFile(Unpacker):
             if entry.relaname in directories:
                 entries.pop(idx)
 
-        return self.process(entries, duplicates)
+        return self.process(entries, duplicates, password)
