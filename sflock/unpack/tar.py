@@ -14,6 +14,7 @@ import tempfile
 from sflock.abstracts import Unpacker, File
 from sflock.config import MAX_TOTAL_SIZE
 
+
 class TarFile(Unpacker):
     name = "tarfile"
     mode = "r:"
@@ -48,12 +49,10 @@ class TarFile(Unpacker):
             if six.PY3:
                 relapath = relapath.encode()
 
-            entries.append(File(
-                relapath=relapath,
-                contents=archive.extractfile(entry).read()
-            ))
+            entries.append(File(relapath=relapath, contents=archive.extractfile(entry).read()))
 
         return self.process(entries, duplicates)
+
 
 class TargzFile(TarFile, Unpacker):
     name = "targzfile"
@@ -73,6 +72,7 @@ class TargzFile(TarFile, Unpacker):
             return False
 
         return self.magic in f.magic
+
 
 class Tarbz2File(TarFile, Unpacker):
     name = "tarbz2file"

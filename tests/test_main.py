@@ -9,8 +9,10 @@ from sflock.exception import IncorrectUsageException
 from sflock.main import supported, unpack
 from sflock.unpack import AceFile, CabFile, RarFile, Zip7File
 
+
 def test_supported():
     assert supported()
+
 
 def test_count_supported():
     count = 9
@@ -28,6 +30,7 @@ def test_count_supported():
         count += 5
 
     assert count == len(supported())
+
 
 def test_unpack_py3():
     if six.PY2:

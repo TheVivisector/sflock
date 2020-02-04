@@ -6,6 +6,7 @@ import six
 
 from sflock.abstracts import Unpacker, File
 
+
 class MsgFile(Unpacker):
     name = "msgfile"
     exts = b".msg"
@@ -39,11 +40,7 @@ class MsgFile(Unpacker):
         return self.get_stream(ascii_filename)
 
     def get_attachment(self, dirname):
-        filename = (
-            self.get_string(dirname, "__substg1.0_3707") or
-            self.get_string(dirname, "__substg1.0_3704") or
-            "att1"
-        )
+        filename = self.get_string(dirname, "__substg1.0_3707") or self.get_string(dirname, "__substg1.0_3704") or "att1"
         contents = self.get_stream(dirname, "__substg1.0_37010102")
         return filename, contents
 
@@ -60,9 +57,7 @@ class MsgFile(Unpacker):
                 filename, contents = self.get_attachment(dirname[0])
                 if six.PY3 and isinstance(filename, str):
                     filename = filename.encode()
-                entries.append(File(
-                    relapath=filename, contents=contents
-                ))
+                entries.append(File(relapath=filename, contents=contents))
                 seen.append(dirname[0])
 
         return self.process(entries, duplicates)

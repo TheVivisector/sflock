@@ -9,6 +9,7 @@ import tempfile
 
 from sflock.abstracts import Unpacker
 
+
 class AceFile(Unpacker):
     name = "acefile"
     exe = "/usr/bin/unace"
@@ -25,9 +26,7 @@ class AceFile(Unpacker):
             filepath = self.f.temp_path(".ace")
             temporary = True
 
-        ret = self.zipjail(
-            filepath, dirpath, "x", filepath, dirpath + os.sep
-        )
+        ret = self.zipjail(filepath, dirpath, "x", filepath, dirpath + os.sep)
         if not ret:
             return []
 

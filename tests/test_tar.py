@@ -9,8 +9,10 @@ from sflock.abstracts import File
 from sflock.main import unpack
 from sflock.unpack import TarFile, TargzFile, Tarbz2File
 
+
 def f(filename):
     return File.from_path(os.path.join(b"tests", b"files", filename))
+
 
 class TestTarFile(object):
     def test_tar_plain(self):

@@ -9,6 +9,7 @@ import six
 
 from sflock.abstracts import Unpacker, File
 
+
 class PdfFile(Unpacker):
     name = "pdffile"
     exts = b".pdf"
@@ -28,9 +29,7 @@ class PdfFile(Unpacker):
             temporary = True
 
         p = peepdf.PDFCore.PDFParser()
-        _, f = p.parse(
-            filepath, forceMode=True, looseMode=True, manualAnalysis=False
-        )
+        _, f = p.parse(filepath, forceMode=True, looseMode=True, manualAnalysis=False)
 
         for version in range(f.updates + 1):
             for obj in f.body[version].objects.values():
@@ -69,11 +68,7 @@ class PdfFile(Unpacker):
                     contents = contents.encode("latin-1")
                     filename = filename.encode()
 
-                entries.append(File(
-                    contents=contents,
-                    filename=filename,
-                    selected=False
-                ))
+                entries.append(File(contents=contents, filename=filename, selected=False))
 
         if temporary:
             os.unlink(filepath)

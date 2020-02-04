@@ -10,22 +10,23 @@ import tempfile
 from sflock.abstracts import Unpacker
 from sflock.exception import UnpackException
 
+
 class Zip7File(Unpacker):
     name = "7zfile"
     exe = "/usr/bin/7z"
-    exts = b".7z", b".iso", b".img" 
+    exts = b".7z", b".iso", b".img", b".xz"
     # TODO Should we use "isoparser" (check PyPI) instead of 7z?
-    magic = "7-zip archive", "ISO 9660", "UDF filesystem data" 
+    magic = "7-zip archive", "ISO 9660", "UDF filesystem data", "XZ compressed data"
 
     def unpack(self, password=None, duplicates=None):
         dirpath = tempfile.mkdtemp()
 
-        if password:
-            raise UnpackException(
-                "Currently password-protected .7z files are not supported "
-                "due to a ZipJail-related monitoring issue (namely, due to "
-                "7z calling clone(2) when a password has been provided)."
-            )
+        # if password:
+        # raise UnpackException(
+        #    "Currently password-protected .7z files are not supported "
+        #    "due to a ZipJail-related monitoring issue (namely, due to "
+        #    "7z calling clone(2) when a password has been provided)."
+        # )
 
         if self.f.filepath:
             filepath = self.f.filepath
@@ -33,10 +34,10 @@ class Zip7File(Unpacker):
         else:
             filepath = self.f.temp_path(b".7z")
             temporary = True
-
-        ret = self.zipjail_clone_one(
-            filepath, dirpath, "x", "-mmt1","-o%s" % dirpath, filepath
-        )
+        if password:
+            ret = self.zipjail_clone_one(filepath, dirpath, "x", "-mmt1", "-o%s", "-p%s" % dirpath, filepath, password)
+        else:
+            ret = self.zipjail_clone_one(filepath, dirpath, "x", "-mmt1", "-o%s" % dirpath, filepath)
         if not ret:
             return []
 
@@ -44,6 +45,7 @@ class Zip7File(Unpacker):
             os.unlink(filepath)
 
         return self.process_directory(dirpath, duplicates)
+
 
 class GzipFile(Unpacker):
     name = "gzipfile"
@@ -61,9 +63,7 @@ class GzipFile(Unpacker):
             filepath = self.f.temp_path(".7z")
             temporary = True
 
-        ret = self.zipjail_clone_one(
-            filepath, dirpath, "x", "-mmt1","-o%s" % dirpath, filepath
-        )
+        ret = self.zipjail_clone_one(filepath, dirpath, "x", "-mmt1", "-o%s" % dirpath, filepath)
         if not ret:
             return []
 
@@ -71,6 +71,7 @@ class GzipFile(Unpacker):
             os.unlink(filepath)
 
         return self.process_directory(dirpath, duplicates)
+
 
 class LzhFile(Unpacker):
     name = "lzhfile"
@@ -88,9 +89,7 @@ class LzhFile(Unpacker):
             filepath = self.f.temp_path(".7z")
             temporary = True
 
-        ret = self.zipjail(
-            filepath, dirpath, "x", "-o%s" % dirpath, filepath
-        )
+        ret = self.zipjail(filepath, dirpath, "x", "-o%s" % dirpath, filepath)
         if not ret:
             return []
 
@@ -98,6 +97,7 @@ class LzhFile(Unpacker):
             os.unlink(filepath)
 
         return self.process_directory(dirpath, duplicates)
+
 
 class VHDFile(Unpacker):
     name = "vhdfile"
@@ -115,9 +115,7 @@ class VHDFile(Unpacker):
             filepath = self.f.temp_path(".vhd")
             temporary = True
 
-        ret = self.zipjail_clone_one(
-            filepath, dirpath, "x","-o%s" % dirpath, filepath
-        )
+        ret = self.zipjail_clone_one(filepath, dirpath, "x", "-o%s" % dirpath, filepath)
         if not ret:
             return []
 
@@ -125,4 +123,3 @@ class VHDFile(Unpacker):
             os.unlink(filepath)
 
         return self.process_directory(dirpath, duplicates)
-

@@ -10,25 +10,11 @@ setup(
     version="0.3.10",
     author="Hatching B.V.",
     author_email="jbr@hatching.io",
-    packages=[
-        "sflock",
-        "sflock.unpack",
-        "sflock.data",
-    ],
-    entry_points={
-        "console_scripts": [
-            "sflock = sflock.main:main",
-        ],
-    },
+    packages=["sflock", "sflock.unpack", "sflock.data",],
+    entry_points={"console_scripts": ["sflock = sflock.main:main",],},
     url="http://sflock.org/",
     license="GPLv3",
     description="Sample staging and detonation utility",
     include_package_data=True,
-    install_requires=[
-        "click==6.6",
-        "cryptography>=2.1",
-        "olefile==0.43",
-        "peepdf>=0.4.1",
-        "python-magic==0.4.12",
-    ],
+    install_requires=["click==6.6", "cryptography>=2.1", "olefile==0.43", "peepdf>=0.4.1", "python-magic==0.4.12",],
 )

@@ -12,6 +12,7 @@ from sflock.abstracts import File, Unpacker
 from sflock.config import MAX_TOTAL_SIZE
 from sflock.exception import UnpackException
 
+
 class ZipFile(Unpacker):
     name = "zipfile"
     exts = b".zip"
@@ -34,13 +35,8 @@ class ZipFile(Unpacker):
             if six.PY3 and isinstance(entry.filename, str):
                 entry.filename = entry.filename.encode()
 
-            return File(
-                relapath=entry.filename,
-                contents=archive.read(entry),
-                password=password
-            )
-        except (RuntimeError, zipfile.BadZipfile, OverflowError,
-                zlib.error) as e:
+            return File(relapath=entry.filename, contents=archive.read(entry), password=password)
+        except (RuntimeError, zipfile.BadZipfile, OverflowError, zlib.error) as e:
             msg = getattr(e, "message", None) or e.args[0]
             if "Bad password" in msg:
                 return
@@ -85,11 +81,7 @@ class ZipFile(Unpacker):
                 return []
 
             f = self.bruteforce(password, archive, entry)
-            entries.append(f or File(
-                filename=entry.filename,
-                mode="failed",
-                description="Error decrypting file"
-            ))
+            entries.append(f or File(filename=entry.filename, mode="failed", description="Error decrypting file"))
 
             if entries[-1].relaname:
                 directories.append(os.path.dirname(entries[-1].relaname))

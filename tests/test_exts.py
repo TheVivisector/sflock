@@ -4,8 +4,10 @@
 
 from sflock.abstracts import File, Unpacker
 
+
 def guess(filename):
     return sorted(list(Unpacker.guess(File(filename=filename))))
+
 
 def test_extensions():
     assert guess(b"a.tar") == ["tarfile"]
@@ -21,6 +23,7 @@ def test_extensions():
     assert guess(b"a.bup") == ["bupfile"]
     assert guess(b"a.lzh") == ["lzhfile"]
     assert guess(b"a.lha") == ["lzhfile"]
+
 
 def test_case():
     assert guess(b"A.ZIP") == ["zipfile"]

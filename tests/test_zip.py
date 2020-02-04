@@ -11,8 +11,10 @@ from sflock.abstracts import File
 from sflock.main import unpack, zipify
 from sflock.unpack import ZipFile
 
+
 def f(filename):
     return File.from_path(os.path.join(b"tests", b"files", filename))
+
 
 class TestZipfile(object):
     def test_zip_plain(self):
@@ -155,17 +157,15 @@ class TestZipfile(object):
     def test_absolute_path(self):
         buf = io.BytesIO()
         z = zipfile.ZipFile(buf, "w")
-        z.writestr("thisisfilename", "A"*1024)
+        z.writestr("thisisfilename", "A" * 1024)
         z.close()
-        f = unpack(contents=buf.getvalue().replace(
-            b"thisisfilename", b"/absolute/path"
-        ))
+        f = unpack(contents=buf.getvalue().replace(b"thisisfilename", b"/absolute/path"))
         assert len(f.children) == 1
         assert f.children[0].filename == b"path"
         assert f.children[0].relapath == b"/absolute/path"
         assert f.children[0].relaname == b"absolute/path"
-        assert f.children[0].contents == b"A"*1024
-        assert f.read(b"/absolute/path") == b"A"*1024
+        assert f.children[0].contents == b"A" * 1024
+        assert f.read(b"/absolute/path") == b"A" * 1024
 
     def test_docx1(self):
         t = ZipFile(f(b"doc_1.docx_"))
